@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import * as THREE from 'three';
 import {createWaterAudio} from './waterAudio.js';
+import {bindWaterGestures} from './waterGestures.js';
 const RIPPLE_COUNT=24;
 const vertex=`varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}`;
 const fragment=`precision highp float;
@@ -26,49 +27,64 @@ col=mix(col,base*vec3(1.12,.69,.42),uDusk*.78);col=mix(col,base*vec3(.79,.77,.72
 float lightX=.46+uDusk*.1;float spread=mix(.045,.12,uDay)+(.9-uv.y)*.07;float band=exp(-pow((uv.x-lightX+sin(uv.y*18.+t*.15)*.023)/spread,2.));float facets=pow(noise(vec2(uv.x*62.+sin(uv.y*38.+t*.4)*2.,uv.y*210.-t*.7)),7.)*2.;float shine=band*facets*(.6+uv.y*.55);vec3 glow=mix(vec3(.60,.77,.88),vec3(.89,.93,.92),uDay);glow=mix(glow,vec3(1.,.72,.42),uDusk);
 col+=glow*(shine*.75+rippleLight*.6);float edge=smoothstep(.85,.2,length((uv-.5)*vec2(.95,.8)));col*=.78+.22*edge;gl_FragColor=vec4(col,1.);}`;
 
-export function WaterScene({minutes,reduced,paused,onStatus,soundEnabled=true}) {
- const host=useRef(null),audio=useRef(null),live=useRef({minutes,reduced,paused,soundEnabled}),[ready,setReady]=useState(false);
- live.current={minutes,reduced,paused,soundEnabled};
+export function WaterScene({minutes,reduced,paused,interactionBlocked=paused,onStatus,soundEnabled=true}) {
+ const host=useRef(null),audio=useRef(null),gestures=useRef(null),live=useRef({minutes,reduced,paused,interactionBlocked,soundEnabled}),[ready,setReady]=useState(false);
+ live.current={minutes,reduced,paused,interactionBlocked,soundEnabled};
  useEffect(()=>{audio.current?.setEnabled(soundEnabled)},[soundEnabled]);
+ useEffect(()=>{if(interactionBlocked)gestures.current?.cancel()},[interactionBlocked]);
  useEffect(()=>{
   let renderer,material,geometry,texture,frame,observer,disposed=false;
-  let clock=0,last=performance.now(),cursor=0,lastMove=0,previous=null,pressed=false;
+  let clock=0,last=performance.now(),cursor=0,lastMove=0,previous=null,flowing=false;
   const el=host.current;
   const sound=createWaterAudio();audio.current=sound;sound.setEnabled(live.current.soundEnabled);
   const ripples=Array.from({length:RIPPLE_COUNT},()=>new THREE.Vector4(0,0,-20,0));
   const point=event=>{const b=el.getBoundingClientRect();return {x:(event.clientX-b.left)/b.width,y:1-(event.clientY-b.top)/b.height,aspect:b.width/b.height}};
   const ripple=(p,strength)=>ripples[cursor++%RIPPLE_COUNT].set(p.x,p.y,clock,strength);
-  const down=event=>{
-   if(live.current.paused||event.isPrimary===false||event.button>0)return;
-   const p=point(event);pressed=true;previous={...p,time:performance.now()};
+  const release=()=>{previous=null;flowing=false;sound.endTrail();};
+  const tap=event=>{
+   const p=point(event);
    if(live.current.soundEnabled)sound.drop(p.x);
    if(!live.current.reduced)ripple(p,1);
-   if(event.pointerType!=='mouse')el.setPointerCapture?.(event.pointerId);
   };
-  const move=event=>{
-   if(live.current.paused||live.current.reduced||event.isPrimary===false)return;
-   if(event.pointerType!=='mouse'&&!pressed)return;
-   const now=performance.now();if(now-lastMove<32)return;
+  const press=event=>{tap(event);previous={...point(event),time:performance.now()};};
+  const hold=event=>{
+   const p=point(event);previous={...p,time:performance.now()};flowing=true;
+   if(!live.current.reduced)ripple(p,.65);
+   if(live.current.soundEnabled)sound.startTrail(p.x,.15);
+  };
+  const move=(event,pressed)=>{
+   if(live.current.interactionBlocked)return;
+   const now=performance.now();if(now-lastMove<24)return;
    const p=point(event),prior=previous;previous={...p,time:now};lastMove=now;
-   if(!prior||now-prior.time>220)return;
+   if(!prior)return;
    const distance=Math.hypot((p.x-prior.x)*p.aspect,(p.y-prior.y)*1.65);
-   if(distance<.006)return;
+   if(distance<.001)return;
+   if(pressed&&live.current.soundEnabled){
+    const speed=Math.min(1,distance*1000/Math.max(24,now-prior.time));
+    if(!flowing){sound.startTrail(p.x,speed);flowing=true;}
+    sound.trail(p.x,speed);
+   }
+   if(live.current.reduced||(!pressed&&now-prior.time>220))return;
    const strength=Math.min(.42,.12+distance*1.5)*(pressed?1.2:1);
-   // Interpolate droplets so fast motion leaves a continuous wake, not scattered rings.
    const steps=Math.min(4,Math.max(1,Math.ceil(distance/.035)));
    for(let i=1;i<=steps;i++)ripple({x:prior.x+(p.x-prior.x)*i/steps,y:prior.y+(p.y-prior.y)*i/steps},strength);
-   if(live.current.soundEnabled)sound.trail(p.x,Math.min(1,distance*8));
   };
-  const up=()=>{pressed=false;};
-  const leave=()=>{previous=null;pressed=false;};
-  const visibility=()=>{if(document.hidden){sound.suspend();previous=null;}};
-  el.addEventListener('pointerdown',down);el.addEventListener('pointermove',move);el.addEventListener('pointerup',up);el.addEventListener('pointercancel',leave);el.addEventListener('pointerleave',leave);document.addEventListener('visibilitychange',visibility);
+  const root=el.closest('.app');
+  const controls='a,button,input,select,textarea,[contenteditable],.music-player,.home-intro,.home-footer,.overlay';
+  const interaction=bindWaterGestures(root,{
+   canStart:target=>!live.current.interactionBlocked&&!document.hidden&&!target.closest?.(controls),
+   prepare:()=>sound.prepare(),tap,press,hold,move,release,
+  });
+  gestures.current=interaction;
+  const visibility=()=>{if(document.hidden){interaction.cancel();sound.suspend();}};
+  const blur=()=>{interaction.cancel();sound.suspend();};
+  document.addEventListener('visibilitychange',visibility);window.addEventListener('blur',blur);
   const fail=()=>{if(!disposed){setReady(false);onStatus?.('静态水面')}};
   const lost=event=>{event.preventDefault();fail()};
   const restored=()=>{if(!disposed){setReady(true);onStatus?.('动态水面')}};
   const cleanup=()=>{
    disposed=true;cancelAnimationFrame(frame);observer?.disconnect();sound.dispose();audio.current=null;
-   el.removeEventListener('pointerdown',down);el.removeEventListener('pointermove',move);el.removeEventListener('pointerup',up);el.removeEventListener('pointercancel',leave);el.removeEventListener('pointerleave',leave);document.removeEventListener('visibilitychange',visibility);
+   interaction.dispose();gestures.current=null;document.removeEventListener('visibilitychange',visibility);window.removeEventListener('blur',blur);
    renderer?.domElement.removeEventListener('webglcontextlost',lost);renderer?.domElement.removeEventListener('webglcontextrestored',restored);
    texture?.dispose();material?.dispose();geometry?.dispose();renderer?.dispose();renderer?.domElement.remove();
   };
@@ -103,5 +119,5 @@ export function WaterScene({minutes,reduced,paused,onStatus,soundEnabled=true}) 
   } catch {fail();}
   return cleanup;
  },[]);
- return <div ref={host} className={`water-scene ${ready?'is-ready':''}`} aria-hidden="true" style={{backgroundImage:`url('${import.meta.env.BASE_URL}assets/water/waterbed.webp')`,touchAction:'none'}}/>;
+ return <div ref={host} className={`water-scene ${ready?'is-ready':''}`} aria-hidden="true" style={{backgroundImage:`url('${import.meta.env.BASE_URL}assets/water/waterbed.webp')`}}/>;
 }

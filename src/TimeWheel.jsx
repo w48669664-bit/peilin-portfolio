@@ -120,7 +120,7 @@ export function TimeWheel({minutes, setMinutes, manual, setManual, soundEnabled 
   }, []);
   const pointerAngle = (event, rect) => Math.atan2(event.clientY - rect.top - rect.height / 2, event.clientX - rect.left - rect.width / 2);
   const startDrag = event => {
-    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    if (!event.isPrimary || drag.current || (event.pointerType === 'mouse' && event.button !== 0)) return;
     event.preventDefault();
     wheel.current.focus({preventScroll: true});
     const rect = wheel.current.getBoundingClientRect();
@@ -138,7 +138,10 @@ export function TimeWheel({minutes, setMinutes, manual, setManual, soundEnabled 
     current.angle = angle;
     change(current.minutes);
   };
-  const endDrag = () => {drag.current = null; setDragging(false);};
+  const endDrag = event => {
+    if (!drag.current || drag.current.id !== event.pointerId) return;
+    drag.current = null; setDragging(false);
+  };
   const onKeyDown = event => {
     const increments = {ArrowUp: 5, ArrowRight: 5, ArrowDown: -5, ArrowLeft: -5, PageUp: 60, PageDown: -60};
     if (event.key in increments) {event.preventDefault(); change(value.current + increments[event.key] * (event.shiftKey ? 6 : 1));}

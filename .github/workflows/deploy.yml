@@ -22,6 +22,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run test:sites
+      - run: npm run test:interaction
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

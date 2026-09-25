@@ -26,3 +26,9 @@ Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts
 - Replace the business-analysis/product-practice sentence with a focus on data science and AI Agent applications.
 - Refine spacing and add a restrained, staggered fade/slide entrance. Reduced-motion users must see all content without animation.
 - Allow the longer bilingual cover to flow and scroll on phones instead of forcing fixed positions.
+
+## Mobile feedback, 2026-09-25
+- Desktop design is accepted. Preserve it while fixing phone/iOS access, native scrolling and sustained water audio.
+- Ordinary swipes must scroll from blank homepage areas. Only a stationary long press (~320ms) claims touch movement for water; controls and reading panels retain native gestures.
+- Continuous drawing uses actual recorded water with fades, works for slow movement, and stops on release/cancel/mute/backgrounding. Respect Safari first-tap audio activation; never synthesize electronic water.
+- Verify safe areas, narrow/landscape layouts and screenshot navigation. Clearly distinguish browser device emulation from physical iOS testing.
