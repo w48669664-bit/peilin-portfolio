@@ -120,3 +120,12 @@ New-address live check: implementation `15ad0c4` deployed successfully in Action
 - Local visual evidence: `docs/qa/v5-time-landscape.png`; browser inspections recorded during the task. Prior QA phone dimensions were layout/mouse-scroll checks and did not validate touch behavior.
 
 Touch-path hardening: compatibility `pointercancel`/`pointerleave` events cannot end a Touch Events-owned long press; only its own cancel/end/scroll lifecycle does so. Added regression coverage for this case.
+
+## Typography restoration — 2026-09-26
+
+- Restored the original Cormorant Garamond family and its real italic, confirmed against commit `4dbf0c5` and the original desktop screenshot. Added regular 600 for mixed Chinese/English emphasized headings. Central English lines, navigation, signature and track titles now share this serif direction.
+- Chinese uses Portfolio Song, a renamed, locally hosted Noto Serif SC derivative. Its outlines have a restrained 4° lean at weights 450/600; no container transforms or browser synthetic italics are involved. Both final subsets cover 880 characters, including all current Chinese copy and the workflow arrow. Original licensing is distributed with the fonts; the reproducible generation script and maintenance notes are in `docs/TYPOGRAPHY.md`.
+- Rebalanced font size, tracking and line height, including larger supporting English and mobile biography text. Accepted content, entrances, water gestures and scrolling logic are unchanged.
+- Visually inspected 1440×900 desktop home; 390×844 home/About; 320×568 home, resume, work list and project detail; 844×390 time wheel. At 320px, the home and resume have 309px client/scroll width (no horizontal overflow); home content is 993px high and scrolls to its footer (scrollTop424.5). Narrow resume chapters and the full name remain readable. Time digits and all four bilingual presets fit in landscape.
+- Local evidence: `docs/qa/v6-font-desktop.png`, `v6-font-mobile.png`, `v6-font-about-mobile.png`, `v6-font-time-landscape.png` (excluded from source control). Browser layout checks do not represent physical iOS device testing.
+- Production build and existing 22 regression checks pass. The existing Three.js chunk-size advisory remains unrelated to typography.

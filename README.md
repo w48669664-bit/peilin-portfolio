@@ -46,7 +46,7 @@ npm run test:interaction
 
 ## 字体与交互声音
 
-使用本地 Noto Sans SC 与 Manrope 子集，保留 OFL 许可；全站中英文统一为非斜体排版。水花音效采用有明确许可的真实录音，来源、处理及试听边界见 `docs/WATER_AUDIO.md`。
+英文恢复最初的 Cormorant Garamond，标题与辅助英文使用真正的斜体。中文使用本地宋体衍生字库 Portfolio Song，字形轻斜 4°，正文与小字单独校准字号。字体均本地托管并保留 OFL 许可，来源与维护见 `docs/TYPOGRAPHY.md`。水花音效采用有明确许可的真实录音，来源、处理及试听边界见 `docs/WATER_AUDIO.md`。
 
 ## 手机操作
 

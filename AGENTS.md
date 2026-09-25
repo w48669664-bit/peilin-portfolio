@@ -32,3 +32,8 @@ Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts
 - Ordinary swipes must scroll from blank homepage areas. Only a stationary long press (~320ms) claims touch movement for water; controls and reading panels retain native gestures.
 - Continuous drawing uses actual recorded water with fades, works for slow movement, and stops on release/cancel/mute/backgrounding. Respect Safari first-tap audio activation; never synthesize electronic water.
 - Verify safe areas, narrow/landscape layouts and screenshot navigation. Clearly distinguish browser device emulation from physical iOS testing.
+
+## Typography feedback, 2026-09-26
+- Restore the original Cormorant Garamond English serif and true italic. This supersedes the previous non-italic direction.
+- Chinese should have a refined Song/serif character and a subtle lean, consistently across the site. Portfolio Song is a locally bundled Noto Serif SC derivative with a 4° glyph lean; never skew layout containers or icons to achieve it.
+- Keep readable body sizes and the accepted bilingual content, layout and mobile scroll behavior. Typography source, licensing and subset regeneration are documented in `docs/TYPOGRAPHY.md`.
