@@ -30,7 +30,7 @@ export function bindWaterGestures(surface, {
     move(position(event), pointer !== null);
   };
   const pointerEnd = event => { if (event.pointerType !== 'touch' && event.pointerId === pointer) cancel(); };
-  const pointerLeave = () => { if (pointer === null) release(); };
+  const pointerLeave = event => { if (event.pointerType !== 'touch' && pointer === null && !touch) release(); };
   const touchStart = event => {
     cancel();
     if (event.touches.length !== 1 || !canStart(event.target)) return;

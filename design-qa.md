@@ -116,5 +116,7 @@ New-address live check: implementation `15ad0c4` deployed successfully in Action
 - Browser layout checks: 320×568 home client/scroll width309/309, content height931; 390×844 home379/379, content height979; 768×1024 tablet; 1440×900 desktop. At390px, project detail width379/379. Time wheel690×600 now width690/690 and844×390 width844/844; 20:00→20:05 keyboard step and full time display verified.
 - Chrome DevTools iPhone16 mode (393×852, touch emulation), using native input drag from the blank water area: a vertical swipe moved the homepage from the top to the visible footer controls. This is an emulated touch check, not a physical iOS/Safari certification. Native Safari automation was unavailable (timeout), so no Safari execution result is claimed.
 - Verified 320px resume contact jump reaches contact content; screenshot next arrow displays Transformer architecture; open/close large preview restores its trigger; desktop water drag produced no captured warning/error.
-- Automated regression coverage: 7 gesture tests +10 mock AudioContext behavior tests; 4 existing deployment-runtime tests. The interaction suite also runs in GitHub Actions.
+- Automated regression coverage: 8 gesture tests +10 mock AudioContext behavior tests; 4 existing deployment-runtime tests. The interaction suite also runs in GitHub Actions.
 - Local visual evidence: `docs/qa/v5-time-landscape.png`; browser inspections recorded during the task. Prior QA phone dimensions were layout/mouse-scroll checks and did not validate touch behavior.
+
+Touch-path hardening: compatibility `pointercancel`/`pointerleave` events cannot end a Touch Events-owned long press; only its own cancel/end/scroll lifecycle does so. Added regression coverage for this case.

@@ -64,6 +64,15 @@ test('second finger cancels water interaction and leaves pinch zoom available', 
   assert.equal(f.emit('touchmove',{touches:[finger(),finger(125,125,2)]}),false);
   assert.equal(f.count('move'),0);assert.equal(f.calls.at(-1)[0],'release');
 });
+test('touch pointer cancellation/leave cannot stop a gesture owned by Touch Events', () => {
+  const f=fixture();f.emit('touchstart',{touches:[finger()]});f.wait();
+  const releases=f.count('release');
+  f.emit('pointercancel',{pointerId:1,pointerType:'touch'});
+  f.emit('pointerleave',{pointerType:'touch'});
+  assert.equal(f.count('release'),releases);
+  assert.equal(f.emit('touchmove',{touches:[finger(105,107)]}),true);
+  assert.equal(f.count('move'),1);
+});
 test('buttons and text regions keep their own touches; touch pointer events are not doubled', () => {
   const f=fixture();f.emit('touchstart',{target:'button',touches:[finger()]});f.wait();
   f.emit('pointerdown',{pointerId:1,pointerType:'touch',button:0});
