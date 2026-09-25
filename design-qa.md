@@ -46,3 +46,29 @@ Additional browser evidence: `mobile-home.png`, `mobile-project.png`, `mobile-re
 No actionable P0/P1/P2 findings remain. Physical-device touch gestures, OS reduced-motion changes during a visit, and real GPU context loss were not forced. Code includes touch swipe, a reduced-motion toggle/system initial preference, and static-background fallback. Reference has no audio track, so exact audio matching cannot be assessed; the site uses original synthesized ambient pieces. Three.js vendor chunk produces Vite's advisory size warning (about 129 KB gzip), with the application split separately.
 
 Final result: passed
+
+
+## Experience update — 2026-09-25
+
+This update follows the user's later product feedback. The central introduction, additional personal sections and mechanical dial intentionally extend the reference recording.
+
+### Implemented and checked
+
+- Full name without punctuation; clear homepage purpose and manual featured-project switcher. About now uses a 172 × 224 desktop portrait / 120 × 158 mobile portrait and readable Chinese body text.
+- Journey, working approach and contact pages verified. Journey's eBay link opens the full resume with its company section at 68 px from the viewport top. Copy email reports success.
+- Water click and drag visibly create layered ripples and a continuous wake. Click sound unlocks Web Audio only after a gesture; trails cannot autoplay. Sound preference persists across reloads. Procedural audio lifecycle was checked with a mocked audio context, but physical speaker listening was not performed.
+- Mechanical time wheel: keyboard increments and mouse wheel update the time; wheel interactions leave both document and overlay scroll at zero. Four light presets, input and return-to-now remain available.
+- Music starts only by request; successive track switches reach Moonlit without an error. Opening either Time or About pauses music; closing the panel leaves it paused.
+- Agent category shows exactly two projects. Project next-image works; lightbox Escape restores focus to its original enlarge button. Next-project navigation opens the correct title.
+- Manual reduced motion applies the reduced class; global sound preference survives a full reload. System preference changes are handled in code; OS settings were not changed during QA.
+- Fixed CSS import order so base rules precede the updated personal and time styles. Production build and four runtime tests passed. Console had no warning/error entries at final local inspection.
+
+### Responsive evidence
+
+Chrome browser checks at 1440 × 900, 390 × 844, 320 × 740 and 844 × 390. Home, About, Time and contact/reading layouts inspected. The 320 px resume and project views have no horizontal page overflow. Landscape time view has scroll height equal to viewport height (390 px).
+
+Local evidence: `docs/qa/v2-home-desktop.png`, `v2-home-mobile.png`, `v2-about-mobile.png`, `v2-time-mobile.png`, `v2-time-landscape.png`, `v2-approach-mobile.png`. Evidence screenshots remain excluded from public source control.
+
+### Remaining validation boundaries
+
+Physical-device multi-touch, physical speaker listening, GPU context-loss forcing, slow-network emulation and platform-specific share-card scraping were not performed. These are not claimed as verified. Three.js retains its advisory 129 KB gzip vendor chunk warning.

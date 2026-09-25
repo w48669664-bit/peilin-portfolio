@@ -2,6 +2,7 @@
 
 - 水面：本项目通过 Image Gen 原创生成浅水、卵石和光影底图，1536×1024，WebP；实时折射与波纹由 Three.js 着色器生成。未使用参考录屏截图作为页面背景。
 - 音乐：本项目原创程序合成的三段 64 秒环境声景。生成脚本为 `scripts/create-soundscapes.py`，使用确定性合成、和声与延迟，无第三方歌曲采样。默认不自动播放。
+- 交互音效：`src/waterAudio.js` 在用户首次点击后以 Web Audio 合成水滴、低频水声及移动尾迹；`src/TimeWheel.jsx` 合成机械卡点音。均为程序生成，不依赖外部录音，开关可单独控制。
 - 简历、照片、学校/公司标识、六个项目的 18 张实际截图和演示视频：来自用户既有个人作品集，由用户授权迁移到新站。个人内容继承旧站版本 32f350c。
 - 字体：Cormorant Garamond，由 @fontsource 包本地提供（SIL Open Font License）；中文使用系统字体。
 - 控件图标：Phosphor Icons（MIT）。
