@@ -72,3 +72,8 @@ Local evidence: `docs/qa/v2-home-desktop.png`, `v2-home-mobile.png`, `v2-about-m
 ### Remaining validation boundaries
 
 Physical-device multi-touch, physical speaker listening, GPU context-loss forcing, slow-network emulation and platform-specific share-card scraping were not performed. These are not claimed as verified. Three.js retains its advisory 129 KB gzip vendor chunk warning.
+
+
+### Live deployment verification
+
+GitHub Pages deployment for implementation commit `4dbf0c5` completed successfully in Actions run `36124624469`. Verified the production homepage at https://w48669664-bit.github.io/peilin-stillwater/ in Chrome, opened 智帧华象 and changed to its Transformer screenshot. All 23 checked public resources returned HTTP 200: 18 project screenshots, the resume PDF, water texture and three ambient tracks; file content types were correct. The original portfolio repository remains clean and unchanged.
