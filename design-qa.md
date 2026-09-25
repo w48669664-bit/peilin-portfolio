@@ -92,3 +92,6 @@ User feedback supersedes the former center slogan and featured card. The homepag
 - Production build and all four runtime tests pass. Compiled font URLs resolve to the local assets/fonts directory under a relative Pages base.
 
 Evidence: `docs/qa/v3-home-desktop.png` plus local visual inspections; earlier screenshots are historical versions.
+
+
+New-address live check: implementation `15ad0c4` deployed successfully in Actions run `36126521658`. Confirmed https://w48669664-bit.github.io/peilin-portfolio/ renders the new homepage and project deep link. All 24 checked resources returned HTTP 200 with correct content types: 18 project screenshots, resume PDF, two WOFF2 fonts and three recorded water sounds. Visually checked the live portfolio-to-project route and second Transformer screenshot. The user preview now points to the new URL. Temporary browser viewport overrides were reset.
