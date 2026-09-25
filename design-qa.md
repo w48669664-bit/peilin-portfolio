@@ -95,3 +95,13 @@ Evidence: `docs/qa/v3-home-desktop.png` plus local visual inspections; earlier s
 
 
 New-address live check: implementation `15ad0c4` deployed successfully in Actions run `36126521658`. Confirmed https://w48669664-bit.github.io/peilin-portfolio/ renders the new homepage and project deep link. All 24 checked resources returned HTTP 200 with correct content types: 18 project screenshots, resume PDF, two WOFF2 fonts and three recorded water sounds. Visually checked the live portfolio-to-project route and second Transformer screenshot. The user preview now points to the new URL. Temporary browser viewport overrides were reset.
+
+
+## Bilingual homepage and entrance motion — 2026-09-25
+
+- Every central Chinese content group now has English beneath it: personal-space label, resume/portfolio heading, expertise, education, class-year focus and both actions. Education explicitly says Master’s Student; the class-year statement focuses on data science and AI Agent applications.
+- The homepage uses paired type hierarchy, greater spacing between content groups and a staggered 760 ms fade/13 px rise/brief blur entrance. Delay steps are 90 ms; the final group starts at 360 ms. Panel entry uses a 360 ms opacity/5 px shift transition. No looping decorative animation was added.
+- Verified reduced-motion mode through the actual control: heading parent computed animationName=none, opacity=1, visible=true. Restoring motion yields intro-arrive / 0.76s. Base elements remain visible when animation is disabled.
+- Inspected 1440×900 desktop, 390×844 phone, 320×568 short phone and 844×390 landscape. Long bilingual copy uses scrollable layout on phones/short landscape. Measured no horizontal overflow: 309/309 px scroll/client width at 320, 833/833 at 844. Footer controls remain reachable.
+- Opened the work panel from short-screen navigation and closed it; keyboard focus returned to the same link. First screenshot during entry visibly showed the staggered transition; the settled screenshot showed all six bilingual groups.
+- Existing water audio and time-wheel behavior are unchanged in this update.

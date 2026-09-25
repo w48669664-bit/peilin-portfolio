@@ -1,0 +1,74 @@
+/* Bilingual cover: paired lines share a clear hierarchy and one quiet entrance. */
+.home-ui{transition:opacity .42s cubic-bezier(.22,.61,.36,1);scrollbar-width:thin;scrollbar-color:#9bb1a64d transparent}
+.home-ui::-webkit-scrollbar{width:5px}
+.home-ui::-webkit-scrollbar-thumb{background:#9bb1a64d;border-radius:8px}
+.home-ui::-webkit-scrollbar-track{background:transparent}
+.home-intro{left:51%;top:49%;width:min(560px,44vw);text-align:center;transform:translate(-50%,-50%)}
+.intro-label{font-size:14px;letter-spacing:1.6px;color:#e8eee5}
+.home-intro .intro-en{display:block;font:400 11px/1.75 var(--type);letter-spacing:.45px;color:#c0cfc7;margin:7px 0 0}
+.intro-label .intro-en{font-size:11px;letter-spacing:1.5px;color:#c5d3ca}
+.intro-heading{margin-top:27px}
+.home-intro h1{font-size:clamp(36px,3.4vw,49px);font-weight:450;line-height:1.4;letter-spacing:4px;margin:0}
+.intro-title-en{font:350 20px/1.6 var(--type);letter-spacing:2.4px;color:#e1e9df;margin-top:8px}
+.intro-fields{margin-top:28px}
+.intro-directions{font-size:14px;letter-spacing:1px;margin:0;line-height:1.7}
+.intro-directions span{padding:0 8px}
+.intro-fields .intro-en{font-size:11px;letter-spacing:.7px;margin-top:7px}
+.intro-biography{display:grid;gap:17px;margin-top:27px;font-size:13px;line-height:1.85;letter-spacing:.2px;color:#e1e8de}
+.intro-biography .intro-en{font-size:11px;line-height:1.75;margin-top:5px;color:#bdcfc4}
+.intro-biography br{display:none}
+.intro-actions{gap:32px;justify-content:center;margin-top:30px}
+.intro-actions>a{position:relative;min-height:60px;gap:26px;padding:6px 2px 12px;font-size:14px;border-bottom:1px solid #dce5d74d;text-align:left}
+.intro-actions>a small{display:block;font:400 10px/1.5 var(--type);letter-spacing:.4px;color:#c5d3ca;margin-top:5px}
+.intro-actions>a:after{content:"";position:absolute;bottom:-1px;left:0;width:100%;height:1px;background:#e7e7cf;transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.22,.61,.36,1)}
+.intro-actions>a:hover:after,.intro-actions>a:focus-visible:after{transform:scaleX(1)}
+.home-ui:before{background:radial-gradient(ellipse at 51% 49%,#071a2763 0%,transparent 57%)}
+.intro-reveal{animation:intro-arrive .76s cubic-bezier(.22,.61,.36,1) var(--intro-delay,0ms) backwards}
+.intro-heading{--intro-delay:90ms}.intro-fields{--intro-delay:180ms}.intro-biography{--intro-delay:270ms}.intro-actions{--intro-delay:360ms}
+@keyframes intro-arrive{from{opacity:0;transform:translate3d(0,13px,0);filter:blur(4px)}to{opacity:1;transform:none;filter:blur(0)}}
+/* Animate compositing properties only; reading panels keep their own scroll position. */
+.overlay{animation:reading-panel-arrive .36s cubic-bezier(.22,.61,.36,1) backwards}
+@keyframes reading-panel-arrive{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@media(max-width:1050px) and (min-width:601px){
+ .home-intro{width:43vw}.intro-label{font-size:13px}.home-intro h1{font-size:35px;letter-spacing:2px}.intro-title-en{font-size:17px;letter-spacing:1.5px}
+ .intro-directions{font-size:12px;letter-spacing:.3px}.intro-directions span{padding:0 5px}.intro-biography{font-size:12px}.intro-biography br{display:block}
+ .intro-actions{gap:28px}.intro-actions>a{font-size:13px;gap:18px}
+}
+@media(max-width:600px){
+ /* Bilingual copy flows naturally on phones, with navigation below the cover. */
+ .home-ui{position:fixed;inset:0;overflow-y:auto;display:grid;grid-template-columns:minmax(0,1fr) 126px;grid-template-areas:"header header" "intro intro" "nav music" "footer footer";grid-template-rows:auto auto auto auto;row-gap:43px;column-gap:12px;align-content:start;padding:25px 24px 22px;pointer-events:none;touch-action:pan-y;background:transparent}
+ .home-header,.home-intro,.home-nav,.home-footer{pointer-events:auto}
+ .home-header{grid-area:header;position:static;inset:auto;min-height:44px}
+ .home-intro{grid-area:intro;position:static;inset:auto;width:100%;transform:none;text-align:left}
+ .intro-label{font-size:12px;letter-spacing:1.2px}.intro-label .intro-en{font-size:10px;letter-spacing:1px;margin-top:5px}
+ .intro-heading{margin-top:23px}.home-intro h1{font-size:34px;line-height:1.45;letter-spacing:2px;margin:0}
+ .intro-title-en{font-size:18px;letter-spacing:1.3px;margin-top:5px;line-height:1.6}
+ .intro-fields{margin-top:24px}.intro-directions{font-size:12px;letter-spacing:.3px}.intro-directions span{padding:0 6px}
+ .intro-fields .intro-en{font-size:10px;letter-spacing:.25px;line-height:1.7;margin-top:5px}
+ .intro-biography{font-size:12px;line-height:1.9;gap:18px;margin-top:26px;letter-spacing:0}
+ .intro-biography .intro-en{font-size:11px;line-height:1.65;letter-spacing:.1px;margin-top:5px;max-width:34em}.intro-biography br{display:block}
+ .intro-actions{justify-content:flex-start;gap:34px;margin-top:25px}.intro-actions>a{font-size:13px;min-height:58px;gap:20px;padding-bottom:11px}.intro-actions>a small{font-size:10px;margin-top:4px}
+ .home-nav{grid-area:nav;position:static;inset:auto;transform:none;gap:0;align-self:center}.home-nav>a{font-size:16px;min-height:36px;gap:9px}.home-nav>a>span{font-size:10px}
+ .clock-button{font-size:16px;min-height:35px;margin-bottom:10px}.clock-button small{font-size:9px}
+ .music-player{grid-area:music;position:static;inset:auto;transform:none;width:126px;align-self:center}.track-name{font-size:17px}
+ .home-footer{grid-area:footer;position:static;inset:auto;gap:16px;align-items:flex-end}.home-footer>p{max-width:150px;font-size:10px}
+ .experience-preferences{gap:4px}.scene-caption{display:none}.scene-status{position:static;grid-column:1/-1;margin:0;font-size:10px}.scene-status:empty{display:none}
+ .panel-open .home-ui{pointer-events:none}
+}
+@media(max-width:360px){
+ .home-ui{padding:23px 22px 20px;grid-template-columns:minmax(0,1fr) 116px;row-gap:35px;column-gap:10px}
+ .home-intro h1{font-size:31px;letter-spacing:1.5px}.intro-title-en{font-size:16px}.intro-biography{font-size:11px}.intro-biography .intro-en{font-size:10px}
+ .intro-fields .intro-en{font-size:10px;letter-spacing:0}.intro-directions{font-size:11px}.intro-directions span{padding:0 4px}
+ .intro-actions{gap:29px}.intro-actions>a{font-size:12px;gap:17px}.home-nav>a>span{display:none}.music-player{width:116px}
+}
+@media(max-height:650px) and (min-width:601px){
+ .home-ui{position:fixed;inset:0;overflow-y:auto;display:grid;grid-template-columns:155px minmax(0,1fr) 120px;grid-template-areas:"header header header" "nav intro music" "footer footer footer";gap:30px 24px;align-content:start;padding:22px 30px;pointer-events:none;touch-action:pan-y}
+ .home-header,.home-intro,.home-nav,.home-footer{pointer-events:auto}.home-header{grid-area:header;position:static;min-height:40px}
+ .home-intro{grid-area:intro;position:static;transform:none;inset:auto;width:100%}.intro-label{font-size:12px}.intro-heading{margin-top:17px}.home-intro h1{font-size:32px;margin:0}.intro-title-en{font-size:17px}
+ .intro-fields{margin-top:20px}.intro-biography{font-size:11px;gap:14px;margin-top:20px}.intro-biography br{display:block}.intro-actions{margin-top:20px}
+ .home-nav{grid-area:nav;position:static;transform:none;align-self:center;gap:0}.home-nav>a{min-height:38px;font-size:15px}.home-nav>a>span{font-size:10px}
+ .music-player{grid-area:music;position:static;transform:none;width:120px;align-self:center}.home-footer{grid-area:footer;position:static}.scene-caption{display:none}.scene-status:empty{display:none}
+ .panel-open .home-ui{pointer-events:none}
+}
+@media(prefers-reduced-motion:reduce){.intro-reveal,.overlay{animation:none}.intro-actions>a:after{transition:none}}
+.reduced-motion .intro-reveal{animation:none}

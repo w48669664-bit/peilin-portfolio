@@ -4,11 +4,14 @@ import {profile,experiences,techStack,awards} from './content';
 const asset=p=>`${import.meta.env.BASE_URL}${p}`;
 export function HomeIntro(){
  return <section className="home-intro" aria-label="个人空间介绍">
-  <p className="intro-label">{profile.name}的个人空间</p>
-  <h1>简历与作品集</h1>
-  <p className="intro-directions">数据科学<span> / </span>AI 应用<span> / </span>Agent</p>
-  <p className="intro-description">同济大学 · 管理科学与工程硕士<br/>2027 届 · 从业务分析到产品实践</p>
-  <div className="intro-actions"><a href="#/resume">在线简历 <ArrowUpRight size={17}/></a><a href="#/work">浏览作品 <ArrowRight size={17}/></a></div>
+  <div className="intro-label intro-reveal"><p>{profile.name}的个人空间</p><p className="intro-en" lang="en">Peilin Xie’s Personal Website</p></div>
+  <header className="intro-heading intro-reveal"><h1>简历与作品集</h1><p className="intro-title-en" lang="en">Resume &amp; Portfolio</p></header>
+  <div className="intro-fields intro-reveal"><p className="intro-directions">数据科学<span> / </span>AI 应用<span> / </span>Agent</p><p className="intro-en" lang="en">Data Science · AI Applications · AI Agents</p></div>
+  <div className="intro-biography intro-reveal">
+   <div><p>同济大学 · 管理科学与工程硕士在读</p><p className="intro-en" lang="en">Tongji University · Master’s Student in<br className="education-break"/> Management Science &amp; Engineering</p></div>
+   <div><p>2027 届 · 专注数据科学与 AI Agent 应用</p><p className="intro-en" lang="en">Class of 2027 · Focused on Data Science<br className="focus-break"/> &amp; AI Agent Applications</p></div>
+  </div>
+  <div className="intro-actions intro-reveal"><a href="#/resume"><span>在线简历<small lang="en">View Resume</small></span><ArrowUpRight size={17}/></a><a href="#/work"><span>浏览作品<small lang="en">Explore Projects</small></span><ArrowRight size={17}/></a></div>
  </section>;
 }
 export function About(){return <section className="about-page"><div className="about-photo"><img src={asset('portrait.jpg')} alt="谢沛霖证件照"/><span>Peilin Xie</span><small>同济大学 · 2027 届</small></div><div className="about-copy"><p className="personal-kicker">关于我 / About me</p><h1>{profile.name}</h1><p className="about-lead">用数据理解问题，<br/>用 AI 把想法变成产品。</p><p>{profile.introduction}</p><p>我喜欢把复杂问题拆解清楚，再通过实验、模型和实际产品验证想法。从业务分析到独立开发，关注的不只是一个结论，也包括它如何成为下一步行动。</p><div className="about-focus"><span>因果推断</span><span>产品实践</span><span>持续探索</span></div><div className="about-links"><a href="#/journey">经历与成长 <ArrowRight size={16}/></a><a href="#/resume">完整简历 <ArrowUpRight size={16}/></a></div><a className="about-mail" href={`mailto:${profile.email}`}>{profile.email}</a></div></section>}

@@ -20,3 +20,9 @@ Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts
 - Remove the floating featured-project card entirely. Keep “谢沛霖的个人空间”, use concise factual homepage content and direct resume/work entrances instead of a large abstract slogan.
 - Use consistent non-italic typography with properly paired Chinese and Latin fonts.
 - Water needs an actual recorded splash/ripple sound, not an oscillator or electronic beep. Preserve real recording provenance and permission. Mechanical watch-like ticks for the time wheel should be more audible but short and controlled.
+
+## Bilingual homepage feedback, 2026-09-25
+- Keep the accepted homepage content and typography direction; add English below each Chinese content group, including the personal-space label, resume/portfolio title, expertise, education, graduate-year focus and the two calls to action.
+- Replace the business-analysis/product-practice sentence with a focus on data science and AI Agent applications.
+- Refine spacing and add a restrained, staggered fade/slide entrance. Reduced-motion users must see all content without animation.
+- Allow the longer bilingual cover to flow and scroll on phones instead of forcing fixed positions.
