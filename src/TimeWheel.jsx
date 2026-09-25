@@ -13,32 +13,76 @@ const presets = [
 ];
 const period = m => m < 330 || m >= 1260 ? '月夜' : m < 480 ? '晨光' : m < 1020 ? '日间' : '黄昏';
 
-/** A quiet mechanical detent. Created only after an intentional gesture. */
+/** A short escapement click: a crisp tooth contact, a second catch and a muted body. */
 function useMechanicalSound(enabled) {
-  const context = useRef(null), last = useRef(0), enabledRef = useRef(enabled);
+  const context = useRef(null), noise = useRef(null), last = useRef(-Infinity);
+  const enabledRef = useRef(enabled), unlocking = useRef(false), tooth = useRef(0);
   enabledRef.current = enabled;
-  useEffect(() => () => {const ctx = context.current; context.current = null; if (ctx && ctx.state !== 'closed') ctx.close().catch(() => {});}, []);
+  useEffect(() => () => {
+    const ctx = context.current;
+    context.current = null; noise.current = null; unlocking.current = false;
+    if (ctx && ctx.state !== 'closed') ctx.close().catch(() => {});
+  }, []);
   return () => {
-    if (!enabledRef.current || performance.now() - last.current < 65) return;
+    const elapsed = performance.now() - last.current;
+    if (!enabledRef.current || elapsed < 58) return;
     last.current = performance.now();
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) return;
     try {
       const ctx = context.current || (context.current = new AudioContext());
       const tick = () => {
-        if (ctx.state !== 'running' || !enabledRef.current) return;
-        const start = ctx.currentTime, oscillator = ctx.createOscillator(), gain = ctx.createGain();
-        oscillator.type = 'triangle';
-        oscillator.frequency.setValueAtTime(1250 + Math.random() * 200, start);
-        oscillator.frequency.exponentialRampToValueAtTime(340, start + .022);
-        gain.gain.setValueAtTime(.0001, start);
-        gain.gain.exponentialRampToValueAtTime(.036, start + .002);
-        gain.gain.exponentialRampToValueAtTime(.0001, start + .035);
-        oscillator.connect(gain); gain.connect(ctx.destination);
-        oscillator.start(start); oscillator.stop(start + .04);
-        oscillator.onended = () => {oscillator.disconnect(); gain.disconnect();};
+        if (context.current !== ctx || ctx.state !== 'running' || !enabledRef.current) return;
+        // Reuse a dry, double-contact noise impulse. It never loops or sustains.
+        if (!noise.current) {
+          const buffer = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * .035), ctx.sampleRate);
+          const samples = buffer.getChannelData(0);
+          let seed = 73819;
+          for (let i = 0; i < samples.length; i++) {
+            const t = i / ctx.sampleRate;
+            seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+            const attack = Math.min(1, t / .00035) * Math.exp(-t / .0028);
+            const catchTime = t - .0105;
+            const catchPulse = catchTime > 0 ? .48 * Math.min(1, catchTime / .00025) * Math.exp(-catchTime / .0018) : 0;
+            samples[i] = (seed / 2147483648 - 1) * (attack + catchPulse);
+          }
+          noise.current = buffer;
+        }
+        const start = ctx.currentTime, accent = tooth.current++ % 2;
+        // Rapid winding is slightly softer, so a run of ticks stays comfortable.
+        const level = elapsed < 100 ? .85 : 1;
+        const master = ctx.createGain(); master.gain.value = level; master.connect(ctx.destination);
+        const source = ctx.createBufferSource(), highpass = ctx.createBiquadFilter();
+        const lowpass = ctx.createBiquadFilter(), contact = ctx.createGain();
+        source.buffer = noise.current; source.playbackRate.value = accent ? 1.04 : .98;
+        highpass.type = 'highpass'; highpass.frequency.value = 850; highpass.Q.value = .55;
+        lowpass.type = 'lowpass'; lowpass.frequency.value = 5700; lowpass.Q.value = .55;
+        contact.gain.value = .29;
+        source.connect(highpass); highpass.connect(lowpass); lowpass.connect(contact); contact.connect(master);
+        source.start(start);
+        const body = ctx.createOscillator(), bodyGain = ctx.createGain();
+        body.type = 'triangle'; body.frequency.setValueAtTime(accent ? 290 : 255, start);
+        body.frequency.exponentialRampToValueAtTime(150, start + .022);
+        bodyGain.gain.setValueAtTime(.0001, start);
+        bodyGain.gain.exponentialRampToValueAtTime(.085, start + .001);
+        bodyGain.gain.exponentialRampToValueAtTime(.0001, start + .029);
+        body.connect(bodyGain); bodyGain.connect(master); body.start(start); body.stop(start + .031);
+        const metal = ctx.createOscillator(), metalGain = ctx.createGain();
+        metal.type = 'sine'; metal.frequency.value = accent ? 2470 : 2210;
+        metalGain.gain.setValueAtTime(.0001, start);
+        metalGain.gain.exponentialRampToValueAtTime(.052, start + .0007);
+        metalGain.gain.exponentialRampToValueAtTime(.0001, start + .009);
+        metal.connect(metalGain); metalGain.connect(master); metal.start(start); metal.stop(start + .011);
+        // All voices finish inside 36 ms, before the next permitted detent.
+        source.onended = () => {source.disconnect(); highpass.disconnect(); lowpass.disconnect(); contact.disconnect(); master.disconnect();};
+        metal.onended = () => {metal.disconnect(); metalGain.disconnect();};
+        body.onended = () => {body.disconnect(); bodyGain.disconnect();};
       };
-      if (ctx.state === 'suspended') ctx.resume().then(tick).catch(() => {}); else tick();
+      if (ctx.state === 'suspended') {
+        if (unlocking.current) return;
+        unlocking.current = true;
+        ctx.resume().then(tick).catch(() => {}).finally(() => {unlocking.current = false;});
+      } else tick();
     } catch { /* Sound is an enhancement; time remains fully interactive. */ }
   };
 }
@@ -101,7 +145,7 @@ export function TimeWheel({minutes, setMinutes, manual, setManual, soundEnabled 
     else if (event.key === 'Home' || event.key === 'End') {event.preventDefault(); change(event.key === 'Home' ? 0 : 1439);}
   };
   return <section className="time-wheel-panel" aria-labelledby="time-wheel-title">
-    <header className="tw-heading"><span className="eyebrow">TURN A LITTLE. FEEL THE LIGHT.</span><h1 id="time-wheel-title">把时间，<em>转慢一点。</em></h1><p>转动时轮，让水面经过一天的光。</p></header>
+    <header className="tw-heading"><span className="eyebrow">TIME & LIGHT</span><h1 id="time-wheel-title">光影时刻</h1><p>转动表盘，选择你喜欢的光线。</p></header>
     <div className={`tw-instrument ${dragging ? 'is-dragging' : ''}`} style={{'--dial-turn': `${-turn / 4}deg`, '--gear-turn': `${-turn * 1.5}deg`}}>
       <div className="tw-indicator" aria-hidden="true"/>
       <div className="tw-wheel" ref={wheel} tabIndex="0" role="slider" aria-label="转动时轮调整光影" aria-valuemin={0} aria-valuemax={1439} aria-valuenow={wrap(minutes)} aria-valuetext={`${clock(minutes)}，${period(minutes)}`} aria-describedby="time-wheel-help" onKeyDown={onKeyDown} onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag} onLostPointerCapture={endDrag}>

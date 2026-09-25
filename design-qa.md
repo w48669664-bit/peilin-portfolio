@@ -77,3 +77,18 @@ Physical-device multi-touch, physical speaker listening, GPU context-loss forcin
 ### Live deployment verification
 
 GitHub Pages deployment for implementation commit `4dbf0c5` completed successfully in Actions run `36124624469`. Verified the production homepage at https://w48669664-bit.github.io/peilin-stillwater/ in Chrome, opened 智帧华象 and changed to its Transformer screenshot. All 23 checked public resources returned HTTP 200: 18 project screenshots, the resume PDF, water texture and three ambient tracks; file content types were correct. The original portfolio repository remains clean and unchanged.
+
+
+## Second review update — personal portfolio identity
+
+User feedback supersedes the former center slogan and featured card. The homepage now keeps the personal-space label, names the purpose as a resume and portfolio, and provides separate online-resume/work links. The right header explicitly downloads the PDF. All public Stillwater branding and the old URL in active metadata are removed. The repository and Pages address are renamed to `peilin-portfolio`; the original resume site remains independent.
+
+- Replaced the typography with locally hosted Noto Sans SC and Manrope WOFF2 subsets (~279 KB total), preserving OFL notices. Removed italic shorthands, unified numeric styles, and changed reading-panel titles to direct labels.
+- Removed the featured-project component and its styling entirely.
+- Water audio now uses three actual CC0 recordings (~65.6 KB total), with natural speed and pitch, sparse movement sound, position panning and sound-on-first-gesture logic. Detailed provenance and measured waveform/level information are in `docs/WATER_AUDIO.md`. A delayed-fetch simulation verified the first-click request waits for decoding rather than requiring a second click.
+- Mechanical time feedback now layers paired contacts, short metallic detail and a low wheel-body transient; limited to one tick per 58 ms with reduced gain during rapid rotation. No initial-render/autoclock playback.
+- Desktop 1440×900 and mobile 390×844 inspected. At 320×568 the home uses a scrollable grid; measured content height 717 px, scrollTop 149, no horizontal overflow, all footer controls reachable. Narrow navigation removes secondary English labels to avoid wrapping.
+- Verified About's larger portrait and new typography visually. Time ArrowRight changed 18:51 to 18:56. Water clicking/dragging after reload produced no console errors or warnings. No subjective physical-speaker listening is claimed.
+- Production build and all four runtime tests pass. Compiled font URLs resolve to the local assets/fonts directory under a relative Pages base.
+
+Evidence: `docs/qa/v3-home-desktop.png` plus local visual inspections; earlier screenshots are historical versions.

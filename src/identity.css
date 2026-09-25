@@ -1,0 +1,91 @@
+@font-face{font-family:"Portfolio Sans SC";src:url('/assets/fonts/portfolio-sans-sc.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:"Portfolio Manrope";src:url('/assets/fonts/portfolio-manrope.woff2') format('woff2');font-weight:200 800;font-style:normal;font-display:swap}
+:root{--type:"Portfolio Manrope","Portfolio Sans SC",sans-serif;--serif:var(--type);font-family:var(--type);font-optical-sizing:auto;-webkit-font-smoothing:antialiased}
+.app em{font-style:normal}
+.signature{font-family:var(--type);font-size:23px;font-weight:500;letter-spacing:1px;gap:15px}
+.signature span{font:400 12px/1.5 var(--type);letter-spacing:1.4px;opacity:.72}
+.home-header{inset:38px 4.6vw auto}
+.home-nav{top:50%;gap:4px}
+.home-nav>a{font-size:17px;min-height:43px;letter-spacing:.5px;gap:15px}
+.home-nav>a>span{font:400 11px/1.5 var(--type);letter-spacing:.3px;opacity:.57}
+.home-nav>a:hover{transform:none}
+.clock-button{font:450 17px/1.5 var(--type);gap:9px;margin-bottom:21px}
+.clock-button small{font:400 10px/1.5 var(--type);letter-spacing:.5px;margin-left:3px}
+.home-intro{left:51%;top:48%;width:min(500px,43vw);transform:translate(-50%,-50%);text-align:center;filter:none;text-shadow:0 2px 22px #06182099}
+.intro-label{font-size:14px;letter-spacing:2px;color:#e0e8e0}
+.home-intro h1{font:450 clamp(34px,3.3vw,49px)/1.5 var(--type);letter-spacing:4px;margin:24px 0 0;color:#f4f5ec}
+.intro-directions{font-size:14px;letter-spacing:1px;color:#e2e9df;margin-top:18px;white-space:nowrap}
+.intro-directions span{padding:0 9px;color:#c3d1c580}
+.intro-description{font-size:14px;line-height:2.2;color:#d5e0d7;margin-top:28px;letter-spacing:.4px}
+.intro-actions{display:flex;gap:34px;justify-content:center;margin-top:30px;pointer-events:auto}
+.intro-actions>a{display:inline-flex;align-items:center;gap:17px;font-size:14px;min-height:46px;border-bottom:1px solid #cedbd254;padding:0 3px}
+.intro-actions>a:hover{border-color:#f3f5eabf}
+.intro-actions>a svg{transition:transform .2s ease}
+.intro-actions>a:hover svg{transform:translate(2px,-1px)}
+.home-ui:before{background:radial-gradient(ellipse at 51% 46%,#061b285c 0%,transparent 54%)}
+.music-player{width:156px;opacity:.88;top:50%;right:4.6vw}
+.track-name{font:450 18px/1.5 var(--type);letter-spacing:.8px}
+.track-caption{font-size:11px;letter-spacing:2px;margin-top:7px}
+.music-player>svg{width:15px;margin-bottom:14px;opacity:.64}
+.music-buttons{gap:6px;margin-top:15px}
+.audio-status{font-size:10px;letter-spacing:0;line-height:1.8}
+.scene-caption span{font-size:10px;letter-spacing:1.8px;opacity:.68}
+.scene-caption em{font:400 12px/1.7 var(--type);letter-spacing:1px;margin-top:8px}
+.home-footer>p{font-size:11px;letter-spacing:.7px}
+.water-hint span{font-size:10px;opacity:.6}
+.sound-toggle,.motion-toggle{font-family:var(--type);font-size:11px;letter-spacing:.5px}
+.about-photo>span{font:450 22px/1.6 var(--type);letter-spacing:.1px}
+.about-copy h1{font-weight:450;letter-spacing:2px}
+.about-copy .about-lead{font-size:24px;font-weight:400;line-height:1.8}
+.personal-page>h1,.contact-page h1,.work-content h1{font-family:var(--type);font-weight:450;letter-spacing:1px;font-size:40px;line-height:1.5}
+.personal-kicker,.eyebrow{font-size:11px;letter-spacing:1px}
+.method-number{font:350 24px/1.7 var(--type);letter-spacing:1px}
+.contact-email{font:450 28px/1.6 var(--type)}
+.resume-header h1 small{font-family:var(--type);font-size:22px;font-weight:400;letter-spacing:.1px}
+.resume-metrics strong,.academic-scores b{font-family:var(--type);font-weight:450;letter-spacing:-1px}
+.work-number{font:400 12px/1.5 var(--type)}
+.tw-hour,.tw-core input,.tw-presets small{font-family:var(--type);font-style:normal}
+.tw-core input{font-weight:350;letter-spacing:-2px;font-size:47px}
+.tw-presets small{font-size:10px;letter-spacing:.2px}
+.tw-heading h1{font-weight:400}
+.clock-button,.tw-core input,.tw-hour,.resume-metrics strong{font-variant-numeric:tabular-nums}
+@media(max-width:1050px) and (min-width:601px){
+ .home-intro{width:40vw;left:51%}.home-intro h1{font-size:35px;letter-spacing:2px}
+ .intro-directions{font-size:12px;letter-spacing:.3px}.intro-directions span{padding:0 5px}.intro-description{font-size:12px}
+ .home-nav{left:30px}.home-nav>a{font-size:15px;gap:10px}.home-nav>a>span{font-size:10px}
+ .music-player{right:22px;width:123px}.track-name{font-size:17px}
+}
+@media(max-width:600px){
+ .home-header{inset:25px 24px auto}.signature{font-size:20px;letter-spacing:1px}.signature span{font-size:10px;margin-top:6px;letter-spacing:1.3px}
+ .home-intro{top:145px;left:24px;transform:none;text-align:left;width:calc(100% - 48px)}
+ .intro-label{font-size:12px;letter-spacing:1.5px}.home-intro h1{font-size:34px;letter-spacing:2px;margin-top:17px;line-height:1.5}
+ .intro-directions{font-size:12px;letter-spacing:.4px;margin-top:12px}.intro-directions span{padding:0 6px}
+ .intro-description{font-size:12px;margin-top:20px;line-height:2.1;letter-spacing:.2px}
+ .intro-actions{justify-content:flex-start;gap:31px;margin-top:20px}.intro-actions>a{font-size:12px;min-height:43px;gap:20px}
+ .home-nav{top:51%;left:24px;transform:none;gap:0}.home-nav>a{font-size:16px;min-height:36px;gap:10px}.home-nav>a>span{font-size:10px}
+ .clock-button{font-size:16px;min-height:36px;margin-bottom:10px}.clock-button small{font-size:9px}
+ .music-player{top:auto;bottom:126px;right:18px;width:123px}.track-name{font-size:17px}.track-caption{font-size:10px}.music-buttons{margin-top:9px}.audio-status{font-size:9px}
+ .home-footer{inset:auto 24px 18px}.home-footer>p{font-size:10px}.water-hint span{font-size:9px}.scene-caption{display:none}
+ .about-photo>span{font-size:22px}.about-copy .about-lead{font-size:22px}.personal-page>h1,.contact-page h1,.work-content h1{font-size:30px}
+ .contact-email{font-size:21px;gap:12px}.resume-header h1 small{font-size:18px}.tw-core input{font-size:36px;letter-spacing:-1px}
+}
+@media(max-width:600px) and (max-height:760px){
+ .home-intro{top:108px}.home-intro h1{font-size:31px;margin-top:12px}.intro-description{margin-top:13px}.intro-actions{margin-top:12px}
+ .home-nav{top:50.5%}.home-nav>a{min-height:32px;font-size:15px}.clock-button{margin-bottom:6px}.music-player{bottom:94px}.home-footer{bottom:12px}
+}
+@media(max-width:360px){.home-nav>a>span{display:none}}
+@media(max-height:620px) and (min-width:601px){
+ .home-header{top:20px}.home-intro{top:50%}.home-intro h1{font-size:31px;margin-top:10px}.intro-description{margin-top:14px;font-size:11px}.intro-directions{margin-top:10px}.intro-actions{margin-top:10px}
+ .intro-label{font-size:12px}.home-nav{top:52%;gap:0}.home-nav>a{min-height:35px}.clock-button{margin-bottom:10px}.home-footer{bottom:12px}.scene-caption{display:none}
+}
+/* Compact phones keep every link reachable instead of overlapping the intro. */
+@media(max-width:600px) and (max-height:670px){
+ .home-ui{position:absolute;overflow-y:auto;display:grid;grid-template-columns:minmax(0,1fr) 118px;grid-template-areas:"header header" "intro intro" "nav music" "footer footer";grid-template-rows:auto auto auto auto;gap:30px 8px;padding:22px 22px 18px;align-content:start;pointer-events:none;touch-action:pan-y;background:#071e2724}
+ .home-header,.home-intro,.home-nav,.home-footer{pointer-events:auto}
+ .home-header{grid-area:header;position:static}.home-intro{grid-area:intro;position:static;transform:none;width:auto;text-align:left}
+ .home-intro h1{font-size:29px;letter-spacing:1px;margin-top:12px}.intro-description{margin-top:13px}.intro-actions{margin-top:14px;gap:28px}
+ .home-nav{grid-area:nav;position:static;transform:none;align-self:start}.home-nav>a{min-height:36px}.clock-button{margin-bottom:9px}
+ .music-player{grid-area:music;position:static;transform:none;width:118px;align-self:center}.track-name{font-size:16px}
+ .home-footer{grid-area:footer;position:static;gap:15px}.home-footer>p{max-width:145px}.experience-preferences{gap:3px}
+ .scene-status{position:static;grid-column:1/-1;font-size:10px}.panel-open .home-ui{pointer-events:none}
+}

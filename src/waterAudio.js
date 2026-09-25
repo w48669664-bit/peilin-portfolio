@@ -1,122 +1,156 @@
-/** Small original Web Audio soundscape, started only by a water pointer gesture. */
+/** CC0 field recordings. Sources, licenses and audio measurements: docs/WATER_AUDIO.md. */
+const SAMPLE_ROOT = `${import.meta.env.BASE_URL}assets/audio/water/`;
+const SAMPLES = [
+  { file: 'hand-splash.mp3', offset: 0.035, gain: 0.55 },
+  { file: 'small-splash.mp3', offset: 0, gain: 0.48 },
+  { file: 'water-swish.mp3', offset: 0.095, gain: 0.15 },
+];
+
 export function createWaterAudio() {
   let context;
   let master;
-  let noiseBuffer;
+  let buffers;
+  let loading;
   let disposed = false;
   let enabled = true;
   let lastDrop = -Infinity;
   let lastTrail = -Infinity;
-  const active = new Set();
+  let lastSample = 1;
+  let intent = 0;
+  const active = new Map();
+  const controller = new AbortController();
 
-  const unlock = () => {
-    if (disposed || !enabled) return false;
+  // Downloading small local files does not play audio or create an AudioContext.
+  // Preloading avoids a network delay between the first water touch and its sound.
+  const files = SAMPLES.map(({ file }) => fetch(`${SAMPLE_ROOT}${file}`, { signal: controller.signal })
+    .then(response => response.ok ? response.arrayBuffer() : null)
+    .catch(() => null));
+
+  function unlock() {
+    if (disposed || !enabled) return null;
     const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return false;
+    if (!AudioContext) return null;
     if (!context) {
       try {
         context = new AudioContext();
         master = context.createGain();
-        master.gain.value = 0.38;
+        master.gain.value = 0.65;
         master.connect(context.destination);
-        noiseBuffer = context.createBuffer(1, Math.ceil(context.sampleRate * 0.6), context.sampleRate);
-        const data = noiseBuffer.getChannelData(0);
-        // Smooth random water texture, with no external samples or network dependency.
-        let prior = 0;
-        for (let i = 0; i < data.length; i++) {
-          prior = (prior + (Math.random() * 2 - 1) * 0.35) / 1.35;
-          data[i] = prior * 1.6;
-        }
-      } catch { return false; }
+      } catch {
+        context?.close().catch(() => {});
+        context = null;
+        return null;
+      }
     }
-    if (context.state === 'suspended') context.resume().catch(() => {});
-    return context.state !== 'closed';
-  };
+    if (context.state === 'closed') return null;
+    // Called directly by the explicit pointer gesture, including on iOS.
+    const resumed = context.state === 'suspended' ? context.resume().catch(() => {}) : Promise.resolve();
+    if (!loading) {
+      const decodingContext = context;
+      loading = Promise.all(files.map(async file => {
+        const bytes = await file;
+        if (!bytes || disposed || decodingContext.state === 'closed') return null;
+        try { return await decodingContext.decodeAudioData(bytes.slice(0)); } catch { return null; }
+      })).then(decoded => {
+        if (!disposed) buffers = decoded;
+      });
+    }
+    return Promise.all([resumed, loading]);
+  }
 
-  function voice(source, filter, gain, pan, duration, delay = 0) {
-    if (active.size >= 16) return;
-    const start = context.currentTime + delay;
+  function play(index, x, gainScale = 1) {
+    if (!enabled || disposed || !context || context.state !== 'running' || document.hidden) return;
+    const buffer = buffers?.[index];
+    if (!buffer || active.size >= 4) return;
+    const sample = SAMPLES[index];
+    const offset = Math.min(sample.offset, buffer.duration * 0.2);
+    const duration = buffer.duration - offset;
+    const now = context.currentTime;
+    const source = context.createBufferSource();
+    source.buffer = buffer;
+    // Preserve the actual recorded water: no oscillators, pitch shift or synthetic noise.
+    source.playbackRate.value = 1;
     const envelope = context.createGain();
     const panner = context.createStereoPanner?.();
-    source.connect(filter || envelope);
-    if (filter) filter.connect(envelope);
+    // Leave headroom when several natural transients overlap during rapid taps.
+    const gain = sample.gain * gainScale / Math.sqrt(active.size + 1);
+    envelope.gain.setValueAtTime(0, now);
+    envelope.gain.linearRampToValueAtTime(gain, now + 0.008);
+    envelope.gain.setValueAtTime(gain, now + Math.max(0.01, duration - 0.1));
+    envelope.gain.linearRampToValueAtTime(0, now + duration);
+    source.connect(envelope);
     if (panner) {
-      panner.pan.value = Math.max(-0.85, Math.min(0.85, pan));
+      panner.pan.value = Math.max(-0.8, Math.min(0.8, (x - 0.5) * 1.4));
       envelope.connect(panner);
       panner.connect(master);
     } else envelope.connect(master);
-    envelope.gain.setValueAtTime(0.0001, start);
-    envelope.gain.exponentialRampToValueAtTime(Math.max(0.0001, gain), start + 0.008);
-    envelope.gain.exponentialRampToValueAtTime(0.0001, start + duration);
     const cleanup = () => {
       active.delete(source);
       source.disconnect();
-      filter?.disconnect();
       envelope.disconnect();
       panner?.disconnect();
     };
     source.addEventListener('ended', cleanup, { once: true });
-    active.add(source);
-    source.start(start);
-    source.stop(start + duration + 0.02);
+    active.set(source, cleanup);
+    source.start(now, offset, duration);
   }
 
-  function noise(gain, pan, frequency, duration) {
-    const source = context.createBufferSource();
-    source.buffer = noiseBuffer;
-    const filter = context.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.value = frequency;
-    filter.Q.value = 0.65;
-    voice(source, filter, gain, pan, duration);
+  function stopVoices() {
+    for (const [source, cleanup] of active) {
+      try { source.stop(); } catch { /* Already ended. */ }
+      cleanup();
+    }
   }
 
   return {
     setEnabled(value) {
-      enabled = value;
-      if (master && context.state !== 'closed') {
+      enabled = Boolean(value);
+      if (!enabled) intent++;
+      if (master && context?.state !== 'closed') {
         master.gain.cancelScheduledValues(context.currentTime);
-        master.gain.setTargetAtTime(value ? 0.38 : 0, context.currentTime, 0.025);
+        master.gain.setTargetAtTime(enabled ? 0.65 : 0, context.currentTime, 0.025);
       }
     },
     drop(x = 0.5) {
-      if (!unlock()) return;
-      const now = context.currentTime;
-      if (now - lastDrop < 0.085) return;
+      if (!enabled || disposed) return;
+      const now = performance.now();
+      if (now - lastDrop < 170) return;
       lastDrop = now;
-      const pan = (x - 0.5) * 1.45;
-      const pitch = 620 + Math.random() * 200;
-      for (let i = 0; i < 2; i++) {
-        const bubble = context.createOscillator();
-        bubble.type = 'sine';
-        const delay = i * 0.035;
-        bubble.frequency.setValueAtTime(pitch * (i ? 1.9 : 1.3), now + delay);
-        bubble.frequency.exponentialRampToValueAtTime(pitch * (i ? 0.82 : 0.42), now + delay + 0.17);
-        voice(bubble, null, i ? 0.09 : 0.2, pan, i ? 0.19 : 0.34, delay);
-      }
-      noise(0.2, pan, 1150, 0.38);
-      const body = context.createOscillator();
-      body.type = 'sine';
-      body.frequency.setValueAtTime(210, now);
-      body.frequency.exponentialRampToValueAtTime(85, now + 0.2);
-      voice(body, null, 0.08, pan, 0.26);
+      const request = ++intent;
+      const ready = unlock();
+      if (!ready) return;
+      ready.then(() => {
+        // Preserve the first explicit gesture while local samples finish loading.
+        // Muting, a newer gesture, backgrounding or disposal cancels this request.
+        if (request !== intent) return;
+        let next = lastSample === 0 ? 1 : 0;
+        if (!buffers?.[next]) next = next === 0 ? 1 : 0;
+        lastSample = next;
+        play(next, x);
+      }).catch(() => {});
     },
     trail(x = 0.5, strength = 0.5) {
-      // Hover can never unlock sound or autoplay: a prior explicit click is required.
-      if (!enabled || disposed || !context || context.state !== 'running') return;
-      const now = context.currentTime;
-      if (now - lastTrail < 0.16) return;
+      // Hover alone never unlocks sound. Sparse, quiet real swishes avoid a mechanical loop.
+      if (!enabled || disposed || !context || context.state !== 'running' || !buffers || strength < 0.38) return;
+      const now = performance.now();
+      if (now - lastTrail < 1000 || now - lastDrop < 950 || active.size) return;
       lastTrail = now;
-      noise(0.04 + Math.min(1, strength) * 0.05, (x - 0.5) * 1.5, 680 + strength * 480, 0.22);
+      play(2, x, 0.65 + Math.min(1, strength) * 0.35);
     },
-    suspend() { if (context?.state === 'running') context.suspend().catch(() => {}); },
+    suspend() {
+      intent++;
+      stopVoices();
+      if (context?.state === 'running') context.suspend().catch(() => {});
+    },
     dispose() {
       disposed = true;
-      active.forEach(source => { try { source.stop(); } catch { /* Already ended. */ } });
-      active.clear();
+      intent++;
+      controller.abort();
+      stopVoices();
       if (context && context.state !== 'closed') context.close().catch(() => {});
       context = null;
-      noiseBuffer = null;
+      buffers = null;
+      master = null;
     },
   };
 }

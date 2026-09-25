@@ -14,3 +14,9 @@ Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts
 - Homepage must immediately explain personal profile + portfolio, with a meaningful central introduction and related content entrances.
 - Water click sounds, fluid pointer/touch trails, and a mechanical rotating time selector with quiet ticks are desired. Provide sound and reduced-motion controls.
 - About photo should be clearly larger; text should stay readable. Preserve detailed resume and three real screenshots per project.
+
+## Updated feedback, 2026-09-25 (second review)
+- Public identity is a personal resume and portfolio, not a product named Stillwater. New repo and Pages path: peilin-portfolio. Keep the local source folder in place.
+- Remove the floating featured-project card entirely. Keep “谢沛霖的个人空间”, use concise factual homepage content and direct resume/work entrances instead of a large abstract slogan.
+- Use consistent non-italic typography with properly paired Chinese and Latin fonts.
+- Water needs an actual recorded splash/ripple sound, not an oscillator or electronic beep. Preserve real recording provenance and permission. Mechanical watch-like ticks for the time wheel should be more audible but short and controlled.
